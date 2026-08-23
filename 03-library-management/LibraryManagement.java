@@ -47,19 +47,30 @@ class User {
         this.userId = userId; 
     }
 
-    void borrowBook(Book book) {
+    boolean borrowBook(Book book) {
+        boolean isAdded = false;
+
         for (int i = 0; i < borrowedBooks.length; i++) {
+
             if (borrowedBooks[i] == book) {
                 System.out.println("You already have the book!");
-                break;
-            } else if (borrowedBooks[i] == null) {
+                return false;
+            }
+
+            if (borrowedBooks[i] == null) {
                 borrowedBooks[i] = book;
+                isAdded = true;
                 break;
-            } else if (i == borrowedBooks.length - 1) {
-                System.out.println("You've reached the limit of issuing books!");
             }
         }
-    }
+
+        if (!isAdded) {
+            System.out.println("You've reached the limit of issuing books!");
+            return false;
+        }
+
+        return true;
+}
 
     void returnBook(Book book) {
         boolean isFound = false;
@@ -94,8 +105,112 @@ class User {
             System.out.println("None");
         }
     }
+}
 
+class Library {
+    static final int TOTAL_BOOKS = 50;
+    static final int TOTAL_USERS = 20;
+    Book[] books = new Book[TOTAL_BOOKS];
+    User[] users = new User[TOTAL_USERS];
 
+    void addBook(Book book) {
+        for (int i = 0; i < books.length; i++) {
+            if (books[i] == null) {
+                books[i] = book;
+                break;
+            } else if (i == books.length - 1) {
+                System.out.println("Library is full! Cannot add more books.");
+            }
+        }
+    }
+
+    void addUser(User user) {
+        for (int i = 0; i < users.length; i++) {
+            if (users[i] == null) {
+                users[i] = user;
+                break;
+            } else if (i == users.length - 1) {
+                System.out.println("Maximum User Limit Reached! Cannot add more users.");
+            }
+        }
+    }
+
+    Book searchBook(int bookId) {
+        for (int i = 0; i < books.length; i++) {
+            if (books[i] != null && books[i].bookId == bookId) {
+                return books[i];
+            }
+        }
+        return null;
+    }
+
+    User searchUser(int userId) {
+        for (int i = 0; i < users.length; i++) {
+            if (users[i] != null && users[i].userId == userId) {
+                return users[i];
+            }
+        }
+        return null;
+    }
+
+    void issueBook(int bookId, int userId) {
+        Book book = searchBook(bookId);
+        User user = searchUser(userId);
+
+        if (book == null) {
+            System.out.println("Book not found!");
+            return;
+        }
+
+        if (user == null) {
+            System.out.println("User not found!");
+            return;
+        }
+
+        if (!book.isAvailable()) {
+            System.out.println("Book is not available for issuing!");
+            return;
+        }
+
+        if (user.borrowBook(book)) {
+            book.issueBook();
+            System.out.println("Book issued successfully!");
+        }
+    }
+
+    void returnBook(int bookId, int userId) {
+        Book book = searchBook(bookId);
+        User user = searchUser(userId);
+
+        if (book == null) {
+            System.out.println("Book not found!");
+            return;
+        }
+
+        if (user == null) {
+            System.out.println("User not found!");
+            return;
+        }
+
+        boolean hasBook = false;
+
+        for (Book borrowedBook : user.borrowedBooks) {
+            if (borrowedBook != null && borrowedBook.bookId == bookId) {
+                hasBook = true;
+                break;
+            }
+        }
+
+        if (!hasBook) {
+            System.out.println("You don't have the book!");
+            return;
+        }
+
+        user.returnBook(book);
+        book.returnBook();
+
+        System.out.println("Book returned successfully!");
+    }
 }
 
 
@@ -103,18 +218,6 @@ public class LibraryManagement {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        Book book1 = new Book(101, "ABC", "Mika");
-        book1.displayBookDetails();
-        book1.issueBook();
-        // book1.displayBookDetails();
-        // book1.displayBookDetails();
-
-        User user1 = new User("John", 1);
-        user1.borrowBook(book1);
-        user1.borrowBook(book1);
-        user1.displayUserDetails();
-        // user1.returnBook(book1);
-        user1.displayUserDetails();
 
 
         sc.close();
