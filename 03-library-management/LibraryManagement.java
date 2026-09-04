@@ -211,6 +211,26 @@ class Library {
 
         System.out.println("Book returned successfully!");
     }
+
+    void displayAllBooks() {
+        System.out.println("Books in Library:");
+        for (Book book : books) {
+            if (book != null) {
+                book.displayBookDetails();
+                System.out.println();
+            }
+        }
+    }
+
+    void  displayAllUsers() {
+        System.out.println("All User Details:");
+        for (User user : users) {
+            if (user != null) {
+                user.displayUserDetails();
+                System.out.println();
+            }
+        }
+    }
 }
 
 
