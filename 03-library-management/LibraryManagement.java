@@ -73,20 +73,11 @@ class User {
 }
 
     void returnBook(Book book) {
-        boolean isFound = false;
-
         for (int i = 0; i < borrowedBooks.length; i++) {
             if (borrowedBooks[i] == book) {
                 borrowedBooks[i] = null;
-                isFound = true; 
                 break;
             }
-        }
-
-        if (isFound) {
-            System.out.println(book.title + " returned successfully!");
-        } else {
-            System.out.println("You don't have the book!");
         }
     }
 
@@ -113,26 +104,40 @@ class Library {
     Book[] books = new Book[TOTAL_BOOKS];
     User[] users = new User[TOTAL_USERS];
 
-    void addBook(Book book) {
+    boolean addBook(Book book) {
+
+        if (searchBook(book.bookId) != null) {
+            System.out.println("Book ID already exists!");
+            return false;
+        }
+
         for (int i = 0; i < books.length; i++) {
             if (books[i] == null) {
                 books[i] = book;
-                break;
-            } else if (i == books.length - 1) {
-                System.out.println("Library is full! Cannot add more books.");
+                return true;
             }
         }
+
+        System.out.println("Library is full! Cannot add more books.");
+        return false;
     }
 
-    void addUser(User user) {
+    boolean addUser(User user) {
+
+        if (searchUser(user.userId) != null) {
+            System.out.println("User ID already exists!");
+            return false;
+        }
+
         for (int i = 0; i < users.length; i++) {
             if (users[i] == null) {
                 users[i] = user;
-                break;
-            } else if (i == users.length - 1) {
-                System.out.println("Maximum User Limit Reached! Cannot add more users.");
+                return true;
             }
         }
+
+        System.out.println("Maximum User Limit Reached!");
+        return false;
     }
 
     Book searchBook(int bookId) {
@@ -222,7 +227,7 @@ class Library {
         }
     }
 
-    void  displayAllUsers() {
+    void displayAllUsers() {
         System.out.println("All User Details:");
         for (User user : users) {
             if (user != null) {
@@ -237,9 +242,133 @@ class Library {
 public class LibraryManagement {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        Library library = new Library();
 
+        while (true) {
 
+            System.out.println("===== LIBRARY MANAGEMENT =====");
+            System.out.println("1. Add Book");
+            System.out.println("2. Add User");
+            System.out.println("3. Search Book");
+            System.out.println("4. Search User");
+            System.out.println("5. Issue Book");
+            System.out.println("6. Return Book");
+            System.out.println("7. Display All Books");
+            System.out.println("8. Display All Users");
+            System.out.println("9. Exit");
 
-        sc.close();
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1: {
+                    System.out.print("Enter Book ID: ");
+                    int bookId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter Book Title: ");
+                    String title = sc.nextLine();
+
+                    System.out.print("Enter Author: ");
+                    String author = sc.nextLine();
+
+                    Book book = new Book(bookId, title, author);
+
+                    if (library.addBook(book)) {
+                        System.out.println("Book added successfully!");
+                    }
+                    break;
+                }
+
+                case 2: {
+                    System.out.print("Enter User ID: ");
+                    int userId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter User Name: ");
+                    String name = sc.nextLine();
+
+                    User user = new User(name, userId);
+
+                    if (library.addUser(user)) {
+                        System.out.println("User added successfully!");
+                    }
+                    break;
+                }
+
+                case 3: {
+                    System.out.print("Enter Book ID: ");
+                    int bookId = sc.nextInt();
+
+                    Book book = library.searchBook(bookId);
+
+                    if (book != null) {
+                        book.displayBookDetails();
+                    } else {
+                        System.out.println("Book not found!");
+                    }
+
+                    break;
+                }
+
+                case 4: {
+                    System.out.print("Enter User ID: ");
+                    int userId = sc.nextInt();
+
+                    User user = library.searchUser(userId);
+
+                    if (user != null) {
+                        user.displayUserDetails();
+                    } else {
+                        System.out.println("User not found!");
+                    }
+
+                    break;
+                }
+
+                case 5: {
+                    System.out.print("Enter User ID: ");
+                    int userId = sc.nextInt();
+
+                    System.out.print("Enter Book ID: ");
+                    int bookId = sc.nextInt();
+
+                    library.issueBook(bookId, userId);
+
+                    break;
+                }
+
+                case 6: {
+                    System.out.print("Enter User ID: ");
+                    int userId = sc.nextInt();
+
+                    System.out.print("Enter Book ID: ");
+                    int bookId = sc.nextInt();
+
+                    library.returnBook(bookId, userId);
+
+                    break;
+                }
+
+                case 7: {
+                    library.displayAllBooks();
+                    break;
+                }
+
+                case 8: {
+                    library.displayAllUsers();
+                    break;
+                }
+
+                case 9:
+                    System.out.println("Exiting...");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } 
     }
 }

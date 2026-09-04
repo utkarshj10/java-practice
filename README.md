@@ -21,3 +21,4 @@ A collection of Java programs I'm building while learning Java and Object-Orient
 |---|---|---|
 | 1 | Student Performance | Classes, constructors, methods, conditionals |
 | 2 | Result Analyzer | Arrays, methods, loops, program structure |
+| 3 | Library Management | Classes, objects, methods, arrays |
